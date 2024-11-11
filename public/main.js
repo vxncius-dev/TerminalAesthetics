@@ -206,5 +206,7 @@ class TerminalAesthetics {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  new TerminalAesthetics("AIzaSyCqEO4hwW_3FMIapotBvQkbf98762tBpPA");
+  // If you need to create a new API key, visit the following link to generate one:
+  // https://aistudio.google.com/app/apikey?hl=pt-br
+  new TerminalAesthetics("Your_GeminiAPIKEY");
 });
