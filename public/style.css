@@ -3,6 +3,7 @@
 html {
   color-scheme: dark;
   font-family: "Terminal", sans-serif;
+  background: #111;
 }
 
 br {
@@ -39,6 +40,7 @@ body {
   min-width: 400px;
   min-height: 700px;
   margin-inline: auto;
+  background: #111;
 }
 
 header{
