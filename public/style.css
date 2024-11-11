@@ -39,8 +39,15 @@ body {
   min-width: 400px;
   min-height: 700px;
   margin-inline: auto;
-  height: 100vh;
-  overflow: hidden;
+}
+
+header{
+  position: fixed;
+  background: #111;
+  padding-top: 15px;
+  width: 100vw;
+  top: 0;
+  height: 95px;
 }
 
 nav {
@@ -62,6 +69,8 @@ h1 {
 
 select {
   margin-bottom: 20px;
+  padding: 0;
+  margin: 0;
 }
 
 option {
@@ -69,10 +78,9 @@ option {
 }
 
 #chat {
-  height: calc(100vh - 180px);
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
 }
 
 #messageList {
@@ -100,7 +108,7 @@ option {
 
 #messageInput {
   padding-inline: 40px;
-  margin-bottom: 10px;
+  padding-bottom: 20px;
 }
 
 .placeholder {
@@ -115,7 +123,7 @@ button {
 }
 
 #backDown {
-  position: absolute;
+  position: fixed;
   bottom: 15%;
   left: 50%;
   transform: translate(-50%);
@@ -130,4 +138,14 @@ button {
 
 #info button:hover{
   opacity: 1;
+}
+
+@media (max-width: 530px) {
+  header{
+     height: 135px;
+  }
+
+  #chat{
+    margin-top: 105px;   
+  }
 }
