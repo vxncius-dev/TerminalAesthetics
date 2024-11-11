@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
 
-class ChatApp {
+class TerminalAesthetics {
   constructor(apiKey) {
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.model = this.genAI.getGenerativeModel({
@@ -11,6 +11,7 @@ class ChatApp {
     this.messageList = document.getElementById("messageList");
     this.backDownButton = document.getElementById("backDown");
     this.newChatButton = document.getElementById("newChat");
+    this.deleteChatButton = document.getElementById("delChat");
     this.currentConversationId = null;
 
     this.setupEventListeners();
@@ -24,9 +25,9 @@ class ChatApp {
     });
 
     document.body.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+      if (event.key === "Enter") { // && (event.metaKey || event.ctrlKey)) {
         const inputText = this.inputChat.textContent;
-        if (inputText === "deleteThis") {
+        if (inputText === "deleteChat") {
           this.deleteConversation(this.currentConversationId);
           this.inputChat.textContent = "";
         } else {
@@ -41,14 +42,9 @@ class ChatApp {
     this.chatContainer.addEventListener("scroll", () => this.handleScroll());
     this.backDownButton.addEventListener("click", () => this.scrollToBottom());
     this.newChatButton.addEventListener("click", () => this.createNewChat());
+    this.deleteChatButton.addEventListener("click", () => this.deleteConversation(this.currentConversationId));
 
     this.inputChat.addEventListener("input", (e) => {
-      if (e.key !== "Esc") {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-        this.scrollToBottom();
-      }
       if (this.inputChat.scrollHeight > this.lastInputHeight) {
         this.lastInputHeight = this.inputChat.scrollHeight;
         this.scrollToBottom();
@@ -71,6 +67,7 @@ class ChatApp {
 
   async sendMessage() {
     if (!this.currentConversationId) this.currentConversationId = this.generateUniqueId();
+
     let inputText = this.inputChat.textContent;
     if (!inputText.trim()) return;
     inputText = this.removeEmojis(inputText);
@@ -85,9 +82,12 @@ class ChatApp {
     this.saveMessage(this.currentConversationId, message);
     this.renderMessages(this.currentConversationId);
 
-    const contextString = this.getLastTwoMessages(this.currentConversationId);
-    const fullText = `${contextString}\nNova mensagem do usuario: ${inputText}`;
-    const result = await this.model.generateContent(inputText);
+    const contextString = this.getContextMessages(this.currentConversationId, 4);
+    const fullText = contextString
+      ? `${contextString}\nusuario: ${inputText}`
+      : `Início de conversa\nusuario: ${inputText}`;
+
+    const result = await this.model.generateContent(fullText);
 
     const aiMessage = {
       id: this.generateUniqueId(),
@@ -100,18 +100,14 @@ class ChatApp {
     this.renderMessages(this.currentConversationId);
   }
 
-  getLastTwoMessages(conversationId) {
+  getContextMessages(conversationId, limit = 4) {
     const chatHistory = this.getChatHistory(conversationId);
-    const lastTwoMessages = chatHistory.slice(-2);
-    let contextString = "";
-    if (lastTwoMessages.length >= 2) {
-      contextString =
-        `${lastTwoMessages[0].sender === "user" ? "usuario" : "gemini"}: ${this.cleanText(lastTwoMessages[0].content)}\n` +
-        `${lastTwoMessages[1].sender === "user" ? "usuario" : "gemini"}: ${this.cleanText(lastTwoMessages[1].content)}`;
-    } else if (lastTwoMessages.length === 1) {
-      contextString = `${lastTwoMessages[0].sender === "user" ? "usuario" : "gemini"}: ${this.cleanText(lastTwoMessages[0].content)}`;
-    }
-    return contextString;
+    if (chatHistory.length === 0) return "";
+
+    const lastMessages = chatHistory.slice(-limit);
+    return lastMessages
+      .map(msg => `${msg.sender === "user" ? "usuario" : "gemini"}: ${this.cleanText(msg.content)}`)
+      .join("\n");
   }
 
   saveMessage(conversationId, message) {
@@ -160,6 +156,8 @@ class ChatApp {
       const lastOption = conversationsContainer.querySelector("option:last-child");
       lastOption.selected = true;
       this.selectConversation(lastOption.value);
+    } else {
+      this.createNewChat();
     }
     this.inputChat.focus();
   }
@@ -208,5 +206,5 @@ class ChatApp {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  new ChatApp("");
+  new TerminalAesthetics("AIzaSyCqEO4hwW_3FMIapotBvQkbf98762tBpPA");
 });

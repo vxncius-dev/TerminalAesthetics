@@ -30,7 +30,7 @@ br {
   list-style: none;
   resize: none;
   font-family: "Terminal", sans-serif;
-  cursor: url('assets/cursor.png'), auto;
+  cursor: url('cursor.png'), auto;
 }
 
 body {
@@ -52,6 +52,12 @@ nav {
 
 h1 {
   margin-bottom: 10px;
+}
+
+#info {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
 }
 
 select {
@@ -115,4 +121,13 @@ button {
   transform: translate(-50%);
   font-size: 1.4em;
   display: none;
+}
+
+#info button{
+  font-size: .5em;
+  opacity: .5;
+}
+
+#info button:hover{
+  opacity: 1;
 }
