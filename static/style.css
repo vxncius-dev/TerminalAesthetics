@@ -1,0 +1,118 @@
+@import url("https://fonts.cdnfonts.com/css/terminal");
+
+html {
+  color-scheme: dark;
+  font-family: "Terminal", sans-serif;
+}
+
+br {
+  display: none;
+}
+
+::placeholder {
+  color: #bbb;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+* {
+  font-weight: 400;
+  background: none;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  list-style: none;
+  resize: none;
+  font-family: "Terminal", sans-serif;
+  cursor: url('assets/cursor.png'), auto;
+}
+
+body {
+  padding: 20px 40px;
+  max-width: 780px;
+  min-width: 400px;
+  min-height: 700px;
+  margin-inline: auto;
+  height: 100vh;
+  overflow: hidden;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-bottom: 5px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+select {
+  margin-bottom: 20px;
+}
+
+option {
+  background: #000;
+}
+
+#chat {
+  height: calc(100vh - 180px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#messageList {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+  font-size: 0.9em;
+}
+
+.ai {
+  color: #199115;
+  margin-bottom: 10px;
+}
+
+.user {
+  width: 70%;
+  margin-bottom: 10px;
+  align-self: end;
+  text-align: right;
+}
+
+#messageList li {
+  padding-bottom: 5px;
+}
+
+#messageInput {
+  padding-inline: 40px;
+  margin-bottom: 10px;
+}
+
+.placeholder {
+  color: #aaa;
+}
+
+button {
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  white-space: nowrap;
+}
+
+#backDown {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 1.4em;
+  display: none;
+}
