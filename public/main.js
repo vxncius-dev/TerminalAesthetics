@@ -13,7 +13,6 @@ class TerminalAesthetics {
     this.newChatButton = document.getElementById("newChat");
     this.deleteChatButton = document.getElementById("delChat");
     this.currentConversationId = null;
-
     this.setupEventListeners();
     this.renderConversationsList();
   }
@@ -24,31 +23,39 @@ class TerminalAesthetics {
       if (selectedConversationId) this.selectConversation(selectedConversationId);
     });
 
-    document.body.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") { // && (event.metaKey || event.ctrlKey)) {
-        const inputText = this.inputChat.textContent;
+    this.inputChat.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        const inputText = this.inputChat.value;
         if (inputText === "deleteChat") {
           this.deleteConversation(this.currentConversationId);
-          this.inputChat.textContent = "";
+          this.inputChat.value = "";
         } else {
           this.sendMessage();
-          this.inputChat.textContent = "";
+          this.inputChat.value = "";
         }
-        this.inputChat.focus();
       }
+      this.inputChat.focus();
     });
 
+    window.addEventListener("scroll", () => {
+      const scrollPosition = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const contentHeight = document.documentElement.scrollHeight;
+      const isScrollable = contentHeight > windowHeight;
+      const isAtBottom = scrollPosition + windowHeight >= contentHeight - 100;
+      this.backDownButton.style.display = (isScrollable && !isAtBottom) ? "grid" : "none";
+    });
+
+
     this.chatContainer.addEventListener("click", () => this.inputChat.focus());
-    this.chatContainer.addEventListener("scroll", () => this.handleScroll());
     this.backDownButton.addEventListener("click", () => this.scrollToBottom());
     this.newChatButton.addEventListener("click", () => this.createNewChat());
     this.deleteChatButton.addEventListener("click", () => this.deleteConversation(this.currentConversationId));
 
     this.inputChat.addEventListener("input", (e) => {
-      if (this.inputChat.scrollHeight > this.lastInputHeight) {
-        this.lastInputHeight = this.inputChat.scrollHeight;
-        this.scrollToBottom();
-      }
+      this.inputChat.style.height = "auto";
+      this.inputChat.style.height = `${this.inputChat.scrollHeight}px`;
+      this.scrollToBottom();
     });
   }
 
@@ -67,35 +74,28 @@ class TerminalAesthetics {
 
   async sendMessage() {
     if (!this.currentConversationId) this.currentConversationId = this.generateUniqueId();
-
-    let inputText = this.inputChat.textContent;
+    let inputText = this.inputChat.value;
     if (!inputText.trim()) return;
     inputText = this.removeEmojis(inputText);
-
     const message = {
       id: this.generateUniqueId(),
       timestamp: new Date().toISOString(),
       sender: "user",
       content: inputText
     };
-
     this.saveMessage(this.currentConversationId, message);
     this.renderMessages(this.currentConversationId);
-
     const contextString = this.getContextMessages(this.currentConversationId, 4);
     const fullText = contextString
       ? `${contextString}\nusuario: ${inputText}`
       : `Início de conversa\nusuario: ${inputText}`;
-
     const result = await this.model.generateContent(fullText);
-
     const aiMessage = {
       id: this.generateUniqueId(),
       timestamp: new Date().toISOString(),
       sender: "ai",
       content: this.removeEmojis(result.response.text())
     };
-
     this.saveMessage(this.currentConversationId, aiMessage);
     this.renderMessages(this.currentConversationId);
   }
@@ -136,14 +136,12 @@ class TerminalAesthetics {
       });
     }
     this.scrollToBottom();
-    this.inputChat.focus();
   }
 
   renderConversationsList() {
     const chatGemini = JSON.parse(localStorage.getItem("chatGemini")) || {};
     const conversationsContainer = document.getElementById("conversationsList");
     const conversationIds = Object.keys(chatGemini);
-
     conversationsContainer.innerHTML = '';
     conversationIds.forEach((conversationId) => {
       const option = document.createElement("option");
@@ -151,7 +149,6 @@ class TerminalAesthetics {
       option.textContent = `Conversation ID: ${conversationId}`;
       conversationsContainer.appendChild(option);
     });
-
     if (conversationIds.length > 0) {
       const lastOption = conversationsContainer.querySelector("option:last-child");
       lastOption.selected = true;
@@ -159,7 +156,6 @@ class TerminalAesthetics {
     } else {
       this.createNewChat();
     }
-    this.inputChat.focus();
   }
 
   selectConversation(conversationId) {
@@ -187,15 +183,10 @@ class TerminalAesthetics {
     this.inputChat.focus();
   }
 
-  handleScroll() {
-    const isAtBottom = this.chatContainer.scrollHeight - this.chatContainer.scrollTop <= this.chatContainer.clientHeight + 5;
-    this.backDownButton.style.display = isAtBottom ? "none" : "grid";
-  }
-
   createNewChat() {
     const newConversationId = this.generateUniqueId();
     this.currentConversationId = newConversationId;
-    this.inputChat.textContent = "";
+    this.inputChat.value = "";
     this.messageList.innerHTML = "";
     let chatGemini = JSON.parse(localStorage.getItem("chatGemini")) || {};
     chatGemini[newConversationId] = [];
