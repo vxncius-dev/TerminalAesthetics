@@ -2,6 +2,10 @@
 
 **Gemini Flash 1.5** is a chat application that emulates a terminal experience, combining interaction with an AI-powered chatbot using Google's Gemini model, all wrapped in a retro terminal aesthetic. The app focuses on providing a minimalist and straightforward interface, reminiscent of classic text-based terminals.
 
+## Demo
+
+You can try out the live demo of the project [here](https://terminal-aesthetics.web.app/).
+
 ## Features
 
 - **Terminal Environment:** A minimalist interface that mimics the experience of a terminal, where messages are sent and received in a way similar to command-line inputs.
